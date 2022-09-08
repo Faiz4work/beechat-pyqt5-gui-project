@@ -15,8 +15,17 @@ from PySide2.QtWidgets import *
 
 class Ui_Beechat_Networks(object):
     def setupUi(self, Beechat_Networks):
+        # Setting initial height for storing new messages
+        self.initial_height = 475
+        self.each_height_gap_single_line = 110
+        self.each_height_gap_double_line = 135
+        self.last_message_bubble_height = 60
+        self.last_message_is_mine = True        
+        
+            
         Beechat_Networks.setObjectName("Beechat_Networks")
-        Beechat_Networks.resize(730, 700)
+        # Beechat_Networks.resize(730, 700)
+        Beechat_Networks.setFixedSize(730, 700)
         # setting font
         QtGui.QFontDatabase.addApplicationFont("Nunito.ttf")
         font = QtGui.QFont("Nunito", 14)
@@ -31,19 +40,21 @@ class Ui_Beechat_Networks(object):
         self.centralwidget = QtWidgets.QWidget(Beechat_Networks)
         self.centralwidget.setObjectName("centralwidget")
         
+        #  add all the messages in a grid layout
+        self.groupbox = QtWidgets.QGroupBox("this is a group box")
+        self.formlayout = QtWidgets.QFormLayout()
+        
         # logo
         self.logo = QtWidgets.QLabel(self.centralwidget)
-        self.logo.setGeometry(QtCore.QRect(40, 20, 120, 120))
-        self.logo.setText("")
+        self.logo.setGeometry(QtCore.QRect(20, 20, 100, 100))
         self.logo.setPixmap(QtGui.QPixmap("logo.png"))
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         
         # public broadcast label
         self.public_broadcast = QtWidgets.QLabel(self.centralwidget)
-        self.public_broadcast.setGeometry(QtCore.QRect(240, 30, 371, 61))
-        # font = QtGui.QFont()
-        # font.setPointSize(21)
+        self.public_broadcast.setGeometry(QtCore.QRect(150, 20, 371, 61))
+
         self.public_broadcast.setFont(font)
         self.public_broadcast.setStyleSheet("color: rgb(255, 255, 255);")
         self.public_broadcast.setObjectName("public_broadcast")
@@ -51,36 +62,35 @@ class Ui_Beechat_Networks(object):
         
         # id label
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(240, 90, 400, 51))
+        self.label.setGeometry(QtCore.QRect(150, 65, 400, 51))
         self.label.setFont(font)
         self.label.setStyleSheet("color: #a6a6a6 ;")
         self.label.setObjectName("label")
         
         # horizontal line
-        self.line_widget = QWidget(self.centralwidget)
-        self.line_widget.setObjectName(u"centralwidget")
-        self.line = QFrame(self.line_widget)
-        self.line.setObjectName(u"line")
-        self.line.setGeometry(QRect(40, 60, 441, 16))
-        self.line.setCursor(QCursor(Qt.PointingHandCursor))
-        self.line.setStyleSheet(u"color: #a6a6a6;")
-        self.line.setLineWidth(2)
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+
+        self.line1 = QtWidgets.QFrame(self.centralwidget)
+        self.line1.setObjectName(u"line")
+        self.line1.setGeometry(QtCore.QRect(40, 140, 650, 1))
+        # self.line1.setCursor(QCursor(Qt.PointingHandCursor))
+        self.line1.setStyleSheet("background-color: white;")
+        # self.line1.setLineWidth(2)
+        self.line1.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line1.setFrameShadow(QtWidgets.QFrame.Sunken)
 
 # ********************************************************************************************
         # frame 1
         self.frame1 = QtWidgets.QFrame(self.centralwidget)
-        self.frame1.setGeometry(QtCore.QRect(20, 230, 491, 90))
+        self.frame1.setGeometry(QtCore.QRect(30, 230, 500, 90))
         self.frame1.setStyleSheet("background-color: #1f243f;\n"
-                        "border-radius: 45px;")
+                        "border-radius: 20px;")
         self.frame1.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame1.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame1.setObjectName("frame1")
         
         # label 2 (into frame 1)
         self.label_2 = QtWidgets.QLabel(self.frame1)
-        self.label_2.setGeometry(QtCore.QRect(40, 0, 271, 41))
+        self.label_2.setGeometry(QtCore.QRect(30, 0, 271, 41))
         
         self.label_2.setFont(id_font)
         self.label_2.setStyleSheet("color: #a6a6a6;")
@@ -88,7 +98,7 @@ class Ui_Beechat_Networks(object):
         
         # label 3 (into frame1)
         self.label_3 = QtWidgets.QLabel(self.frame1)
-        self.label_3.setGeometry(QtCore.QRect(40, 40, 281, 41))
+        self.label_3.setGeometry(QtCore.QRect(30, 40, 281, 41))
         # font = QtGui.QFont()
         # font.setPointSize(14)
         self.label_3.setFont(font)
@@ -98,7 +108,7 @@ class Ui_Beechat_Networks(object):
 # **********************************************************************************************
         # frame 2 starts here
         self.frame_2 = QtWidgets.QFrame(self.centralwidget)
-        self.frame_2.setGeometry(QtCore.QRect(20, 340, 491, 120))
+        self.frame_2.setGeometry(QtCore.QRect(30, 340, 500, 120))
         self.frame_2.setStyleSheet("background-color: #1f243f;\n"
                 "border-radius: 20px;")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -107,7 +117,7 @@ class Ui_Beechat_Networks(object):
         
         # message id label
         self.label_4 = QtWidgets.QLabel(self.frame_2)
-        self.label_4.setGeometry(QtCore.QRect(20, 0, 271, 41))
+        self.label_4.setGeometry(QtCore.QRect(30, 0, 271, 41))
         # font = QtGui.QFont()
         # font.setPointSize(14)
         self.label_4.setFont(id_font)
@@ -116,7 +126,7 @@ class Ui_Beechat_Networks(object):
         
         # message
         self.label_5 = QtWidgets.QLabel(self.frame_2)
-        self.label_5.setGeometry(QtCore.QRect(20, 40, 451, 68))
+        self.label_5.setGeometry(QtCore.QRect(30, 40, 451, 68))
         # font = QtGui.QFont()
         # font.setPointSize(14)
         self.label_5.setFont(font)
@@ -130,9 +140,9 @@ class Ui_Beechat_Networks(object):
      
         # reply message frame
         self.reply = QtWidgets.QFrame(self.centralwidget)
-        self.reply.setGeometry(QtCore.QRect(340, 475, 371, 60))
+        self.reply.setGeometry(QtCore.QRect(320, 475, 371, 60))
         self.reply.setStyleSheet("background-color: #4857a8;\n"
-                "border-radius: 30px;")
+                "border-radius: 20px;")
         self.reply.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.reply.setFrameShadow(QtWidgets.QFrame.Raised)
         self.reply.setObjectName("reply")
@@ -159,7 +169,7 @@ class Ui_Beechat_Networks(object):
         self.plainTextEdit.setGeometry(QtCore.QRect(10, 0, 640, 90))
         self.plainTextEdit.setStyleSheet("background-color: rgb(58, 60, 66);\n"
                 "color: rgb(255, 255, 255);\n"
-                "border-radius: 45px;\n"
+                "border-radius: 20px;\n"
                 "padding: 20px;")
         self.plainTextEdit.setObjectName("plainTextEdit")
         
@@ -186,6 +196,22 @@ class Ui_Beechat_Networks(object):
 
         self.retranslateUi(Beechat_Networks)
         QtCore.QMetaObject.connectSlotsByName(Beechat_Networks)
+        
+        # adding items to layout
+        self.formlayout.addRow(self.frame1)
+        self.formlayout.addRow(self.frame_2)
+        self.formlayout.addRow(self.reply)
+        self.groupbox.setLayout(self.formlayout)
+        
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll.setWidget(self.groupbox)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedSize(300, 300)
+        
+        self.qvlayout = QtWidgets.QVBoxLayout()
+        self.qvlayout.addWidget(self.scroll)
+        
+        self.centralwidget.setLayout(self.qvlayout)
 
     def retranslateUi(self, Beechat_Networks):
         _translate = QtCore.QCoreApplication.translate
@@ -198,10 +224,35 @@ class Ui_Beechat_Networks(object):
         self.label_5.setText(_translate("Beechat_Networks", "Hello Everyone this is a message that is 73 characters long."))
         self.label_7.setText(_translate("Beechat_Networks", "Hello Everyone"))
         self.send_button.setText(_translate("Beechat_Networks", "send"))
-        self.send_button.clicked.connect(self.prname)
-    def prname(self):
-        #     print("send button clicked")
-        pass
+        self.send_button.clicked.connect(self.send_message)
+        
+    
+    def send_message(self):
+        self.text = self.plainTextEdit.toPlainText()
+        self.plainTextEdit.clear()
+        self.plainTextEdit.setFocus()
+        
+        # showing message in front of window as my message
+        # making a new frame 
+        self.new_frame = QtWidgets.QFrame(self.centralwidget)
+        if self.last_message_bubble_height == 60:
+                self.current_height = self.each_height_gap_single_line
+        elif self.last_message_bubble_height == 120:
+                self.current_height = self.each_height_gap_double_line
+                
+        self.height = self.initial_height + self.current_height
+        
+        # Making a new frame
+        self.new_frame.setGeometry(QtCore.QRect(320, self.height, 371, 60))
+        self.new_frame.setStyleSheet("background-color: #4857a8;\n"
+                "border-radius: 20px;")
+        self.new_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.new_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.new_frame.setObjectName("new_frame")
+        
+        self.formlayout.addRow(self.reply)
+        
+        print(self.text)
 
 
 if __name__ == "__main__":

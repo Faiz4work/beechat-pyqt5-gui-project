@@ -138,6 +138,7 @@ class Ui_Beechat_Networks(object):
         
         self.verticalLayout.addWidget(self.widget_6)
         
+        # widget no 7
         self.widget_7 = QtWidgets.QWidget(self.scrollAreaWidgetContents_2)
         self.widget_7.setMinimumSize(QtCore.QSize(600, 100))
         self.widget_7.setMaximumSize(QtCore.QSize(624, 200))
@@ -147,7 +148,7 @@ class Ui_Beechat_Networks(object):
         self.frame_3 = QtWidgets.QFrame(self.widget_7)
         self.frame_3.setGeometry(QtCore.QRect(180, 10, 441, 91))
         self.frame_3.setStyleSheet("background-color: #4857a8;\n"
-"border-radius: 20px;")
+                "border-radius: 20px;")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
@@ -163,13 +164,11 @@ class Ui_Beechat_Networks(object):
         
         self.verticalLayout.addWidget(self.widget_7)
         
-        self.widget_8 = QtWidgets.QWidget(self.scrollAreaWidgetContents_2)
-        self.widget_8.setMinimumSize(QtCore.QSize(600, 100))
-        self.widget_8.setMaximumSize(QtCore.QSize(624, 200))
-        self.widget_8.setStyleSheet("background-color: rgb(255, 255, 127);")
-        self.widget_8.setObjectName("widget_8")
         
-        self.verticalLayout.addWidget(self.widget_8)
+        
+        # *********************************************************
+        
+        # *********************************************************
         
         
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
@@ -202,8 +201,53 @@ class Ui_Beechat_Networks(object):
         self.label_3.setText(_translate("Beechat_Networks", "0013A20041EFD42C"))
         self.label_5.setText(_translate("Beechat_Networks", "Hello Everyone! Here is the characters which is not more then 73 characters"))
         self.label_6.setText(_translate("Beechat_Networks", "Hello Everyone!"))
+        
+        # adding a button to send reply
+        self.send_button.clicked.connect(self.add_reply_widget)
 
 
+    def add_reply_widget(self):
+        # getting text and clearing then focus agian on input widget
+        self.text = self.plainTextEdit.toPlainText()
+        self.plainTextEdit.clear()
+        self.plainTextEdit.setFocus()
+        
+        # widget 8
+        self.new_widget = QtWidgets.QWidget(self.scrollAreaWidgetContents_2)
+        self.new_widget.setMinimumSize(QtCore.QSize(600, 100))
+        self.new_widget.setMaximumSize(QtCore.QSize(624, 200))
+        # self.new_widget.setStyleSheet("background-color: #4857a8;")
+        self.new_widget.setObjectName("widget_8")
+        
+        self.new_frame = QtWidgets.QFrame(self.new_widget)
+        self.new_frame.setGeometry(QtCore.QRect(180, 10, 441, 91))
+        self.new_frame.setStyleSheet("background-color: #4857a8;\n"
+                "border-radius: 20px;")
+        self.new_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.new_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.new_frame.setObjectName("new_frame")
+        
+        # this is id label and we don't need id label in our reply so hiding it.
+        # self.flabel_1 = QtWidgets.QLabel(self.new_frame)
+        # self.flabel_1.setGeometry(QtCore.QRect(30, 10, 251, 20))
+        # font = QtGui.QFont()
+        # font.setPointSize(14)
+        # self.flabel_1.setFont(font)
+        # self.flabel_1.setStyleSheet("color: #a6a6a6;")
+        # self.flabel_1.setObjectName("label_3")
+        
+        self.flabel_2 = QtWidgets.QLabel(self.new_frame)
+        self.flabel_2.setGeometry(QtCore.QRect(30, 20, 431, 51))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.flabel_2.setFont(font)
+        self.flabel_2.setStyleSheet("color: rgb(255, 255, 255);")
+        self.flabel_2.setWordWrap(True)
+        self.flabel_2.setObjectName("label_5")
+        self.flabel_2.setText(self.text)
+        
+        self.verticalLayout.addWidget(self.new_widget)
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

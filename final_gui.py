@@ -1,8 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from digi.xbee.devices import XBeeDevice
+
 
 
 class Ui_Beechat_Networks(object):
-    def setupUi(self, Beechat_Networks):
+    def setupUi(self, Beechat_Networks, device):
+        self.device = device
+        self.device.open()
         Beechat_Networks.setObjectName("Beechat_Networks")
         Beechat_Networks.resize(709, 743)
         font = QtGui.QFont()
@@ -23,7 +27,7 @@ class Ui_Beechat_Networks(object):
         self.public_broadcast = QtWidgets.QLabel(self.centralwidget)
         self.public_broadcast.setGeometry(QtCore.QRect(180, 10, 371, 61))
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(14)
         self.public_broadcast.setFont(font)
         self.public_broadcast.setStyleSheet("color: rgb(255, 255, 255);")
         self.public_broadcast.setObjectName("public_broadcast")
@@ -31,7 +35,7 @@ class Ui_Beechat_Networks(object):
         self.label.setGeometry(QtCore.QRect(180, 60, 371, 51))
         
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(14)
         self.label.setFont(font)
         self.label.setStyleSheet("color: #a6a6a6 ;")
         self.label.setObjectName("label")
@@ -43,12 +47,13 @@ class Ui_Beechat_Networks(object):
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.widget)
         self.plainTextEdit.setGeometry(QtCore.QRect(0, 0, 661, 90))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(14)
         self.plainTextEdit.setFont(font)
         self.plainTextEdit.setStyleSheet("background-color: rgb(58, 60, 66);\n"
                 "color: rgb(255, 255, 255);\n"
                 "border-radius: 45px;\n"
-                "padding: 10px;")
+                "padding-top: 10px;\n"
+                "padding-left: 30px;")
         self.plainTextEdit.setObjectName("plainTextEdit")
         
         self.send_button = QtWidgets.QPushButton(self.widget)
@@ -112,7 +117,7 @@ class Ui_Beechat_Networks(object):
         self.widget_6.setObjectName("widget_6")
         
         self.frame_2 = QtWidgets.QFrame(self.widget_6)
-        self.frame_2.setGeometry(QtCore.QRect(0, 0, 501, 101))
+        self.frame_2.setGeometry(QtCore.QRect(0, 0, 501, 120))
         self.frame_2.setStyleSheet("background-color: #1f243f;\n"
                 "border-radius: 20px;")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -165,12 +170,6 @@ class Ui_Beechat_Networks(object):
         self.verticalLayout.addWidget(self.widget_7)
         
         
-        
-        # *********************************************************
-        
-        # *********************************************************
-        
-        
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(20, 120, 671, 2))
@@ -204,6 +203,14 @@ class Ui_Beechat_Networks(object):
         
         # adding a button to send reply
         self.send_button.clicked.connect(self.add_reply_widget)
+        
+        # Calling receive message function
+        def data_receive_callback(xbee_message):
+            self.device_id = xbee_message.remote_device.get_64bit_addr()
+            self.client_message = xbee_message.data.decode()
+            self.add_cilent_message_widget(self.device_id, self.client_message)
+
+        self.device.add_data_received_callback(data_receive_callback)
 
 
     def add_reply_widget(self):
@@ -217,7 +224,7 @@ class Ui_Beechat_Networks(object):
         self.new_widget.setMinimumSize(QtCore.QSize(600, 100))
         self.new_widget.setMaximumSize(QtCore.QSize(624, 200))
         # self.new_widget.setStyleSheet("background-color: #4857a8;")
-        self.new_widget.setObjectName("widget_8")
+        self.new_widget.setObjectName("new_widget")
         
         self.new_frame = QtWidgets.QFrame(self.new_widget)
         self.new_frame.setGeometry(QtCore.QRect(180, 10, 441, 91))
@@ -227,15 +234,6 @@ class Ui_Beechat_Networks(object):
         self.new_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.new_frame.setObjectName("new_frame")
         
-        # this is id label and we don't need id label in our reply so hiding it.
-        # self.flabel_1 = QtWidgets.QLabel(self.new_frame)
-        # self.flabel_1.setGeometry(QtCore.QRect(30, 10, 251, 20))
-        # font = QtGui.QFont()
-        # font.setPointSize(14)
-        # self.flabel_1.setFont(font)
-        # self.flabel_1.setStyleSheet("color: #a6a6a6;")
-        # self.flabel_1.setObjectName("label_3")
-        
         self.flabel_2 = QtWidgets.QLabel(self.new_frame)
         self.flabel_2.setGeometry(QtCore.QRect(30, 20, 431, 51))
         font = QtGui.QFont()
@@ -243,16 +241,70 @@ class Ui_Beechat_Networks(object):
         self.flabel_2.setFont(font)
         self.flabel_2.setStyleSheet("color: rgb(255, 255, 255);")
         self.flabel_2.setWordWrap(True)
-        self.flabel_2.setObjectName("label_5")
+        self.flabel_2.setObjectName("flabel_2")
         self.flabel_2.setText(self.text)
+        
+        self.verticalLayout.addWidget(self.new_widget)
+        # sending messgae to client
+        self.device.send_data_broadcast(self.text)
+
+    
+    # Adding client message in message scroll bar
+    def add_cilent_message_widget(self, device_id, client_message):
+        self.device_id = device_id
+        self.client_message = client_message
+        
+        # client message widget
+        self.new_widget = QtWidgets.QWidget(self.scrollAreaWidgetContents_2)
+        self.new_widget.setMinimumSize(QtCore.QSize(600, 100))
+        self.new_widget.setMaximumSize(QtCore.QSize(624, 200))
+        # self.new_widget.setStyleSheet("background-color: #4857a8;")
+        self.new_widget.setObjectName("new_widget")
+        
+        self.new_frame = QtWidgets.QFrame(self.new_widget)
+        self.new_frame.setGeometry(QtCore.QRect(0, 0, 501, 120))
+        self.new_frame.setStyleSheet("background-color: #1f243f;\n"
+                "border-radius: 20px;")
+        self.new_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.new_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.new_frame.setObjectName("new_frame")
+        
+        # Id label
+        self.flabel_1 = QtWidgets.QLabel(self.new_frame)
+        self.flabel_1.setGeometry(QtCore.QRect(30, 10, 251, 20))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.flabel_1.setFont(font)
+        self.flabel_1.setStyleSheet("color: #a6a6a6;")
+        self.flabel_1.setObjectName("label_3")
+        self.flabel_1.setText(self.device_id)
+        
+        self.flabel_2 = QtWidgets.QLabel(self.new_frame)
+        self.flabel_2.setGeometry(QtCore.QRect(30, 40, 500, 40))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.flabel_2.setFont(font)
+        self.flabel_2.setStyleSheet("color: rgb(255, 255, 255);")
+        self.flabel_2.setWordWrap(True)
+        self.flabel_2.setObjectName("flabel_2")
+        self.flabel_2.setText(self.client_message)
         
         self.verticalLayout.addWidget(self.new_widget)
         
 if __name__ == "__main__":
     import sys
+    
+#     Setting xbee device
+    # TODO: Replace with the serial port where your local module is connected to.
+    PORT = "/dev/ttyUSB0"
+    # TODO: Replace with the baud rate of your local module.
+    BAUD_RATE = 9600
+    device = XBeeDevice(PORT, BAUD_RATE)
+    
+#     Initiilzing app
     app = QtWidgets.QApplication(sys.argv)
     Beechat_Networks = QtWidgets.QMainWindow()
     ui = Ui_Beechat_Networks()
-    ui.setupUi(Beechat_Networks)
+    ui.setupUi(Beechat_Networks, device)
     Beechat_Networks.show()
     sys.exit(app.exec_())

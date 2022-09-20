@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from digi.xbee.devices import XBeeDevice
-
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class Ui_Beechat_Networks(object):
@@ -202,11 +202,18 @@ class Ui_Beechat_Networks(object):
         self.send_button.clicked.connect(self.add_reply_widget)
         
         # Calling receive message function
-        def data_receive_callback(xbee_message):
+        def run_threaded_function_to_add_client_message(self, xbee_message):
             self.device_id = xbee_message.remote_device.get_64bit_addr()
             self.client_message = xbee_message.data.decode()
             self.add_cilent_message_widget(self.device_id, self.client_message)
-
+            
+        def data_receive_callback(xbee_message):
+            self.worker = WorkerThread()
+            self.worker.start()
+            self.worker.client_message.connect(
+                self.run_threaded_function_to_add_client_message(xbee_message)
+            )
+        
         self.device.add_data_received_callback(data_receive_callback)
 
 
@@ -242,7 +249,7 @@ class Ui_Beechat_Networks(object):
         
         self.verticalLayout.addWidget(self.new_widget)
         # sending messgae to client
-        # self.device.send_data_broadcast(self.text)
+        self.device.send_data_broadcast(self.text)
         
         # setting scrollbar to the bottom
         x = self.scrollArea.verticalScrollBar().maximum()
@@ -290,6 +297,13 @@ class Ui_Beechat_Networks(object):
         self.flabel_2.setText(str(self.client_message))
         
         self.verticalLayout.addWidget(self.new_widget)
+        
+        
+def WorkerThread(QThread):
+    client_message = pyqtSignal(int)
+    print("Thread is called")
+    client_message.emit(1)
+        
         
 if __name__ == "__main__":
     import sys

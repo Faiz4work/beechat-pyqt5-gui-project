@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from digi.xbee.devices import XBeeDevice
-
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class Ui_Beechat_Networks(object):
@@ -206,8 +206,13 @@ class Ui_Beechat_Networks(object):
             self.device_id = xbee_message.remote_device.get_64bit_addr()
             self.client_message = xbee_message.data.decode()
             self.add_cilent_message_widget(self.device_id, self.client_message)
-
-        self.device.add_data_received_callback(data_receive_callback)
+        
+        def run_threaded_function_to_add_client_message(self):
+            self.worker = WorkerThread()
+            self.worker.start()
+            self.worker.client_message.connect(self.device.add_data_received_callback(data_receive_callback))
+        
+        self.run_threaded_function_to_add_client_message()
 
 
     def add_reply_widget(self):
@@ -290,6 +295,13 @@ class Ui_Beechat_Networks(object):
         self.flabel_2.setText(str(self.client_message))
         
         self.verticalLayout.addWidget(self.new_widget)
+        
+        
+def WorkerThread(QThread):
+    client_message = pyqtSignal(int)
+    print("Thread is called")
+    client_message.emit(1)
+        
         
 if __name__ == "__main__":
     import sys

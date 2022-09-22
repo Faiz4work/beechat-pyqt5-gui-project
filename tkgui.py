@@ -1,5 +1,5 @@
 from tkinter import *
-from digi.xbee.devices import XBeeDevice
+# from digi.xbee.devices import XBeeDevice
 
 # TODO: Replace with the serial port where your local module is connected to.
 PORT = "/dev/ttyUSB0"
@@ -11,18 +11,18 @@ main = Tk()
 main.geometry("350x400")
 
 # initilizing device
-device = XBeeDevice(PORT, BAUD_RATE)
-device.open()
+# device = XBeeDevice(PORT, BAUD_RATE)
+# device.open()
 
 last_row = 0
 # last_column = 0
 
 def add_message_frame():
     global last_row
-    global device
+    # global device
     msg = ent.get()
     ent.delete(0, END)
-    device.send_data_broadcast(msg)
+    # device.send_data_broadcast(msg)
     print(msg)
     
     # adding a new frame with message
@@ -46,12 +46,12 @@ def add_reply_frame(device_id, message):
     new_label = Label(new_frame, text=message)
     new_label.grid(row=0, column=0)
 
-def data_receive_callback(xbee_message):
-    print("From %s >> %s" % (xbee_message.remote_device.get_64bit_addr(),
-                                    xbee_message.data.decode()))
-    add_reply_frame(xbee_message.remote_device.get_64bit_addr(),
-                    xbee_message.data.decode())
-device.add_data_received_callback(data_receive_callback)
+# def data_receive_callback(xbee_message):
+#     print("From %s >> %s" % (xbee_message.remote_device.get_64bit_addr(),
+#                                     xbee_message.data.decode()))
+#     add_reply_frame(xbee_message.remote_device.get_64bit_addr(),
+#                     xbee_message.data.decode())
+# device.add_data_received_callback(data_receive_callback)
 
 # f1 = Frame(main, width=100, height=50, padx=10, pady=10, bg="red")
 # f1.grid(row=0, column=0)
